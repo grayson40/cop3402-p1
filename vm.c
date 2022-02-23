@@ -44,6 +44,10 @@ int base(int L, int BP, int *stack)
 
 void execute_program(instruction *code, int printFlag)
 {
+  // Initiliaze stack and register file
+  int stack[MAX_STACK_LENGTH];
+  int RF[REG_FILE_SIZE];
+
   // Initialize base pointer, stack pointer, and program counter.
   int BP = MAX_STACK_LENGTH - 1;
   int SP = BP + 1;
