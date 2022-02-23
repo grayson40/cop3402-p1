@@ -54,7 +54,7 @@ void execute_program(instruction *code, int printFlag)
   int PC = 0;
 
   // Enter fetch-execute cycle.
-  int halt = 0;
+  int halt = 0, line = 0;
   while (!halt)
   {
     // Fetch an instruction and place in IR register.
@@ -237,6 +237,8 @@ void execute_program(instruction *code, int printFlag)
         IR.r = 0;
       break;
     }
+    print_execution(line, opname[IR.opcode - 1], IR, PC, BP, SP, &stack, &RF);
+    line++;
   }
   // keep this
   if (printFlag)
