@@ -6,64 +6,64 @@
 
 typedef enum token_type
 {
-  periodsym = 1,
-  varsym,
-  lbracketsym,
-  procsym,
-  rbracketsym,
-  callsym,
-  commasym,
-  beginsym,
-  semicolonsym,
-  endsym,
-  assignsym,
-  ifsym,
-  questionsym,
-  dosym,
-  colonsym,
-  readsym,
-  lparenthesissym,
-  writesym,
-  rparenthesissym,
-  identsym,
-  eqlsym,
-  numbersym,
-  neqsym,
-  modsym,
-  lsssym,
-  divsym,
-  leqsym,
-  multsym,
-  gtrsym,
-  subsym,
-  geqsym,
-  addsym,
-  whilesym
+    periodsym = 1,
+    varsym,
+    lbracketsym,
+    procsym,
+    rbracketsym,
+    callsym,
+    commasym,
+    beginsym,
+    semicolonsym,
+    endsym,
+    assignsym,
+    ifsym,
+    questionsym,
+    dosym,
+    colonsym,
+    readsym,
+    lparenthesissym,
+    writesym,
+    rparenthesissym,
+    identsym,
+    eqlsym,
+    numbersym,
+    neqsym,
+    modsym,
+    lsssym,
+    divsym,
+    leqsym,
+    multsym,
+    gtrsym,
+    subsym,
+    geqsym,
+    addsym,
+    whilesym
 } token_type;
 
 typedef struct lexeme
 {
-  char name[12];
-  int value;
-  token_type type;
+    char name[12];
+    int value;
+    token_type type;
 } lexeme;
 
 typedef struct instruction
 {
-  int opcode;
-  int r;
-  int l;
-  int m;
+    int opcode;
+    int r;
+    int l;
+    int m;
 } instruction;
 
 typedef struct symbol
 {
-  int kind; // 1 for variables, 2 for arrays, 3 for procedures
-  char name[12];
-  int size; // length of array
-  int level;
-  int addr; // address for variables, first entry address for arrays, first instruction index for procedures
-  int mark; // if the symbol is active
+    int kind; // 1 for variables, 2 for arrays, 3 for procedures
+    char name[12];
+    int size; // length of array
+    int level;
+    int addr; // address for variables, first entry address for arrays, first instruction index for procedures
+    int mark; // if the symbol is active
 } symbol;
 
 // Map opcodes integer value to name
