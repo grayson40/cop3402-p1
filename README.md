@@ -1,7 +1,6 @@
 # Almalki's Spring 2022 Systems Software Project
 
 ## Group Members
----
 
 ### Grayson Crozier
 
