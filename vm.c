@@ -109,14 +109,20 @@ void execute_program(instruction *code, int printFlag)
     case INC:
       // Decrement SP by M, check for Stack Overflow Error
       // which can occur if SP < 0 after the decrement
+      SP = SP - IR.m;
+      if (SP < 0)
+        printf("Virtual Machine Error: Stack Overflow Error\n");
       break;
 
     case JMP:
       // Jump to instruction M
+      PC = IR.m;
       break;
 
     case JPC:
       // Jump to instruction M if register R is 0
+      if (IR.r == 0)
+        PC = IR.m;
       break;
 
     case WRT:
@@ -125,6 +131,8 @@ void execute_program(instruction *code, int printFlag)
 
     case RED:
       // Register R equals scanf()
+      printf("Please Enter a Value: ");
+      scanf("%d", &IR.r);
       break;
 
     case HAL:
@@ -134,60 +142,95 @@ void execute_program(instruction *code, int printFlag)
 
     case NEG:
       // Negate the register R
+      IR.r = ~IR.r;
       break;
 
     case ADD:
       // Add the registers L and M and store the result
       // in register R
+      int tmp = IR.l + IR.m;
+      IR.r = tmp;
       break;
 
     case SUB:
       // Subtract register M from register L and store the result
       // in register R
+      int tmp = IR.l - IR.m;
+      IR.r = tmp;
       break;
 
     case MUL:
       // Multiply registers L and M and store the result
       // in register R
+      int tmp = IR.l * IR.m;
+      IR.r = tmp;
       break;
 
     case DIV:
       // Divide register L by register M and store the result
       // in register R
+      int tmp = IR.l / IR.m;
+      IR.r = tmp;
       break;
 
     case MOD:
       // Set register R equal to register L modulo register M
+      int tmp = IR.l % IR.m;
+      IR.r = tmp;
       break;
 
     case EQL:
       // If register L equals register M, set register R to 1.
       // Otherwise set register R to 0
+      if (IR.l == IR.m)
+        IR.r = 1;
+      else
+        IR.r = 0;
       break;
 
     case NEQ:
       // If register L does not equal register M, set register R to
       // 1. Otherwise set register R to 0
+      if (IR.l == IR.m)
+        IR.r = 1;
+      else
+        IR.r = 0;
       break;
 
     case LSS:
       // If register L is less than register M, set register R to 1.
       // Otherwise set register R to 0
+      if (IR.l < IR.m)
+        IR.r = 1;
+      else
+        IR.r = 0;
       break;
 
     case LEQ:
       // If register L is less than or equal to register M, set register R to 1.
       // Otherwise set register R to 0
+      if (IR.l <= IR.m)
+        IR.r = 1;
+      else
+        IR.r = 0;
       break;
 
     case GTR:
       // If register L is greater than register M, set register R to  1.
       // Otherwise set register R to 0
+      if (IR.l > IR.m)
+        IR.r = 1;
+      else
+        IR.r = 0;
       break;
 
     case GEQ:
       // If register L is greater than or equal to register M, set register R to 1.
       // Otherwise set register R to 0
+      if (IR.l >= IR.m)
+        IR.r = 1;
+      else
+        IR.r = 0;
       break;
     }
   }
