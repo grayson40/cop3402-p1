@@ -22,3 +22,29 @@
 #define LEQ 21
 #define GTR 22
 #define GEQ 23
+
+char opname[23][3] = {
+    "LIT",
+    "RET",
+    "LOD",
+    "STO",
+    "CAL",
+    "INC",
+    "JMP",
+    "JPC",
+    "WRT",
+    "RED",
+    "HAL",
+    "NEG",
+    "ADD",
+    "SUB",
+    "MUL",
+    "DIV",
+    "MOD",
+    "EQL",
+    "NEQ",
+    "LSS",
+    "LEQ",
+    "GTR",
+    "GEQ",
+};
