@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "compiler.h"
-#include "vm.h"
 #define REG_FILE_SIZE 10
 #define MAX_STACK_LENGTH 100
 
