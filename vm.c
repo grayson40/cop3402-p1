@@ -53,12 +53,12 @@ void execute_program(instruction *code, int printFlag)
   int halt = 0;
   while (!halt)
   {
-    // Fetch an instruction and place in IR register
-    // Increment program counter
+    // Fetch an instruction and place in IR register.
+    // Increment program counter.
     instruction IR;
     IR = code[PC++];
 
-    // Execute instruction based off instruction opcode
+    // Execute instruction based off instruction opcode.
     switch (IR.opcode)
     {
     default:
