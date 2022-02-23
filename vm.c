@@ -11,6 +11,10 @@
 #define REG_FILE_SIZE 10
 #define MAX_STACK_LENGTH 100
 
+// Initiliaze stack and register file
+int stack[MAX_STACK_LENGTH];
+int RF[REG_FILE_SIZE];
+
 void print_execution(int line, char *opname, instruction IR, int PC, int BP, int SP, int *stack, int *RF)
 {
   int i;
@@ -43,14 +47,17 @@ int base(int L, int BP, int *stack)
 
 void execute_program(instruction *code, int printFlag)
 {
-  // Initiliaze stack and register file
-  int stack[MAX_STACK_LENGTH];
-  int RF[REG_FILE_SIZE];
-
   // Initialize base pointer, stack pointer, and program counter.
   int BP = MAX_STACK_LENGTH - 1;
   int SP = BP + 1;
   int PC = 0;
+
+  // keep this
+  if (printFlag)
+  {
+    printf("\t\t\t\t\tPC\tSP\tBP\n");
+    printf("Initial values:\t\t\t\t%d\t%d\t%d\n", PC, SP, BP);
+  }
 
   // Enter fetch-execute cycle.
   int halt = 0, line = 0;
@@ -60,6 +67,9 @@ void execute_program(instruction *code, int printFlag)
     // Increment program counter.
     instruction IR;
     IR = code[PC++];
+
+    // Load instructions into stack before execution
+    stack[line] = IR.opcode;
 
     // Temp variable for calculations
     int tmp = 0;
@@ -239,13 +249,8 @@ void execute_program(instruction *code, int printFlag)
         IR.r = 0;
       break;
     }
+    // Print line of exection after instruction
     print_execution(line, opname[IR.opcode - 1], IR, PC, BP, SP, stack, RF);
     line++;
-  }
-  // keep this
-  if (printFlag)
-  {
-    printf("\t\t\t\t\tPC\tSP\tBP\n");
-    printf("Initial values:\t\t\t\t%d\t%d\t%d\n", PC, SP, BP);
   }
 }
