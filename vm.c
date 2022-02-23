@@ -62,6 +62,9 @@ void execute_program(instruction *code, int printFlag)
     instruction IR;
     IR = code[PC++];
 
+    // Temp variable for calculations
+    int tmp = 0;
+
     // Execute instruction based off instruction opcode.
     switch (IR.opcode)
     {
@@ -152,34 +155,34 @@ void execute_program(instruction *code, int printFlag)
     case ADD:
       // Add the registers L and M and store the result
       // in register R
-      int tmp = IR.l + IR.m;
+      tmp = IR.l + IR.m;
       IR.r = tmp;
       break;
 
     case SUB:
       // Subtract register M from register L and store the result
       // in register R
-      int tmp = IR.l - IR.m;
+      tmp = IR.l - IR.m;
       IR.r = tmp;
       break;
 
     case MUL:
       // Multiply registers L and M and store the result
       // in register R
-      int tmp = IR.l * IR.m;
+      tmp = IR.l * IR.m;
       IR.r = tmp;
       break;
 
     case DIV:
       // Divide register L by register M and store the result
       // in register R
-      int tmp = IR.l / IR.m;
+      tmp = IR.l / IR.m;
       IR.r = tmp;
       break;
 
     case MOD:
       // Set register R equal to register L modulo register M
-      int tmp = IR.l % IR.m;
+      tmp = IR.l % IR.m;
       IR.r = tmp;
       break;
 
@@ -237,7 +240,7 @@ void execute_program(instruction *code, int printFlag)
         IR.r = 0;
       break;
     }
-    print_execution(line, opname[IR.opcode - 1], IR, PC, BP, SP, &stack, &RF);
+    print_execution(line, opname[IR.opcode - 1], IR, PC, BP, SP, stack, RF);
     line++;
   }
   // keep this
