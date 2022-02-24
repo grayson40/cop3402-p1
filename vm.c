@@ -11,8 +11,6 @@
 #define REG_FILE_SIZE 10
 #define MAX_STACK_LENGTH 100
 
-<<<<<<< Updated upstream
-=======
 // Map opcodes integer value to opname
 #define LIT 1
 #define RET 2
@@ -65,7 +63,6 @@ char *opnames[23] = {
     "GEQ",
 };
 
->>>>>>> Stashed changes
 // Initiliaze stack and register file
 int stack[MAX_STACK_LENGTH];
 int RF[REG_FILE_SIZE];
@@ -115,24 +112,14 @@ void execute_program(instruction *code, int printFlag)
     }
 
     // Enter fetch-execute cycle.
-<<<<<<< Updated upstream
-    int halt = 0, line = 0;
-    while (!halt)
-=======
     int line, halt = 0;
     while (halt == 0)
->>>>>>> Stashed changes
     {
         // Fetch an instruction and place in IR register.
         // Increment program counter.
+        line = PC;
         instruction IR;
         IR = code[PC++];
-
-        // Load instructions into stack before execution
-<<<<<<< Updated upstream
-        stack[line] = IR.opcode;
-=======
->>>>>>> Stashed changes
 
         // Temp variable for calculations
         int tmp = 0;
@@ -144,15 +131,10 @@ void execute_program(instruction *code, int printFlag)
             printf("bad opcode");
             break;
 
-<<<<<<< Updated upstream
-        case LIT:
-            // RF[IR.R] = IR.M
-=======
         //LIT
         case 1:
             // RF[IR.r] = IR.m
             RF[IR.r] = IR.m;
->>>>>>> Stashed changes
             break;
 
         //RET
@@ -170,12 +152,9 @@ void execute_program(instruction *code, int printFlag)
         case 3:
             // Load value to register IR.R from the stack location at
             // offset RF[IR.M] from L lexicographical levels up
-            // RF[IR.R] = stack[base(L) - RF[IR.M]]
             // Before performing the load, check for Out of Bounds
             // Access Error by checking if base(L) - M is less than
             // zero or greater than or equal to MAX_STACK_LENGTH
-<<<<<<< Updated upstream
-=======
             tmp = base(IR.l, BP, stack) - RF[IR.m];
             if(tmp < 0 || tmp >= MAX_STACK_LENGTH){
                 printf("Virtual Machine Error: Out of Bounds Access Error\n");
@@ -184,19 +163,15 @@ void execute_program(instruction *code, int printFlag)
             else{
                 RF[IR.r] = stack[tmp];
             }
->>>>>>> Stashed changes
             break;
 
         //STO
         case 4:
             // Store value from register IR.R to the stack location at
             // offset RF[IR.M] from L lexicographical levels down
-            // stack[base(L) - RF[IR.M]] = RF[IR.R]
             // Before performing the load, check for Out of Bounds
             // Access Error by checking if base(L) - M is less than
             // zero or greater than or equal to MAX_STACK_LENGTH
-<<<<<<< Updated upstream
-=======
             tmp = base(IR.l, BP, stack) - RF[IR.m];
             if(tmp < 0 || tmp >= MAX_STACK_LENGTH){
                 printf("Virtual Machine Error: Out of Bounds Access Error\n");
@@ -205,7 +180,6 @@ void execute_program(instruction *code, int printFlag)
             else{
                 stack[tmp] = RF[IR.r];
             }
->>>>>>> Stashed changes
             break;
             
         //CAL
@@ -247,31 +221,24 @@ void execute_program(instruction *code, int printFlag)
         //JPC
         case 8:
             // Jump to instruction M if register R is 0
-            if (IR.r == 0)
+            if (RF[IR.r] == 0)
                 PC = IR.m;
             break;
 
         //WRT
         case 9:
             // Print register R
-<<<<<<< Updated upstream
-=======
             tmp = RF[IR.r];
             printf("Write Value: %d\n", tmp);
->>>>>>> Stashed changes
             break;
 
         //RED
         case 10:
             // Register R equals scanf()
             printf("Please Enter a Value: ");
-<<<<<<< Updated upstream
-            scanf("%d", &IR.r);
-=======
             scanf("%d", &tmp);
             printf("\n");
             RF[IR.r] = tmp;
->>>>>>> Stashed changes
             break;
 
         //HLT
@@ -283,117 +250,108 @@ void execute_program(instruction *code, int printFlag)
         //NEG
         case 12:
             // Negate the register R
-<<<<<<< Updated upstream
-            IR.r = ~IR.r;
-=======
             RF[IR.r] = -1 * RF[IR.r];
->>>>>>> Stashed changes
             break;
 
         //ADD
         case 13:
             // Add the registers L and M and store the result
             // in register R
-            tmp = IR.l + IR.m;
-            IR.r = tmp;
+            tmp = RF[IR.l] + RF[IR.m];
+            RF[IR.r] = tmp;
             break;
 
         //SUB
         case 14:
             // Subtract register M from register L and store the result
             // in register R
-            tmp = IR.l - IR.m;
-            IR.r = tmp;
+            tmp = RF[IR.l] - RF[IR.m];
+            RF[IR.r] = tmp;
             break;
 
         //MUL
         case 15:
             // Multiply registers L and M and store the result
             // in register R
-            tmp = IR.l * IR.m;
-            IR.r = tmp;
+            tmp = RF[IR.l] * RF[IR.m];
+            RF[IR.r] = tmp;
             break;
 
         //DIV
         case 16:
             // Divide register L by register M and store the result
             // in register R
-            tmp = IR.l / IR.m;
-            IR.r = tmp;
+            tmp = RF[IR.l] / RF[IR.m];
+            RF[IR.r] = tmp;
             break;
 
         //MOD
         case 17:
             // Set register R equal to register L modulo register M
-            tmp = IR.l % IR.m;
-            IR.r = tmp;
+            tmp = RF[IR.l] % RF[IR.m];
+            RF[IR.r] = tmp;
             break;
 
         //EQL
         case 18:
             // If register L equals register M, set register R to 1.
             // Otherwise set register R to 0
-            if (IR.l == IR.m)
-                IR.r = 1;
+            if (RF[IR.l] == RF[IR.m])
+                RF[IR.r] = 1;
             else
-                IR.r = 0;
+                RF[IR.r] = 0;
             break;
 
         //NEQ
         case 19:
             // If register L does not equal register M, set register R to
             // 1. Otherwise set register R to 0
-            if (IR.l == IR.m)
-                IR.r = 1;
+            if (RF[IR.l] != RF[IR.m])
+                RF[IR.r] = 1;
             else
-                IR.r = 0;
+                RF[IR.r] = 0;
             break;
 
         //LSS
         case 20:
             // If register L is less than register M, set register R to 1.
             // Otherwise set register R to 0
-            if (IR.l < IR.m)
-                IR.r = 1;
+            if (RF[IR.l] < RF[IR.m])
+                RF[IR.r] = 1;
             else
-                IR.r = 0;
+                RF[IR.r] = 0;
             break;
 
         //LEQ
         case 21:
             // If register L is less than or equal to register M, set register R to 1.
             // Otherwise set register R to 0
-            if (IR.l <= IR.m)
-                IR.r = 1;
+            if (RF[IR.l] <= RF[IR.m])
+                RF[IR.r] = 1;
             else
-                IR.r = 0;
+                RF[IR.r] = 0;
             break;
 
         //GTR
         case 22:
             // If register L is greater than register M, set register R to  1.
             // Otherwise set register R to 0
-            if (IR.l > IR.m)
-                IR.r = 1;
+            if (RF[IR.l] > RF[IR.m])
+                RF[IR.r] = 1;
             else
-                IR.r = 0;
+                RF[IR.r] = 0;
             break;
 
         //GEQ
         case 23:
             // If register L is greater than or equal to register M, set register R to 1.
             // Otherwise set register R to 0
-            if (IR.l >= IR.m)
-                IR.r = 1;
+            if (RF[IR.l] >= RF[IR.m])
+                RF[IR.r] = 1;
             else
-                IR.r = 0;
+                RF[IR.r] = 0;
             break;
         }
-<<<<<<< Updated upstream
-        // Print line of exection after instruction
-        print_execution(line, opname[IR.opcode - 1], IR, PC, BP, SP, stack, RF);
-        line++;
-=======
 
         // Print line of execution after instruction
         // only if there was no error
@@ -401,6 +359,5 @@ void execute_program(instruction *code, int printFlag)
             char *op = opnames[IR.opcode - 1];
             print_execution(line, op, IR, PC, BP, SP, stack, RF);
         }
->>>>>>> Stashed changes
     }
 }
