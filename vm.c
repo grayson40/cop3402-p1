@@ -11,6 +11,58 @@
 #define REG_FILE_SIZE 10
 #define MAX_STACK_LENGTH 100
 
+// Map opcodes integer value to opname
+#define LIT 1
+#define RET 2
+#define LOD 3
+#define STO 4
+#define CAL 5
+#define INC 6
+#define JMP 7
+#define JPC 8
+#define WRT 9
+#define RED 10
+#define HAL 11
+#define NEG 12
+#define ADD 13
+#define SUB 14
+#define MUL 15
+#define DIV 16
+#define MOD 17
+#define EQL 18
+#define NEQ 19
+#define LSS 20
+#define LEQ 21
+#define GTR 22
+#define GEQ 23
+
+// ISA opnames
+char *opnames[23] = {
+    "LIT",
+    "RET",
+    "LOD",
+    "STO",
+    "CAL",
+    "INC",
+    "JMP",
+    "JPC",
+    "WRT",
+    "RED",
+    "HAL",
+    "NEG",
+    "ADD",
+    "SUB",
+    "MUL",
+    "DIV",
+    "MOD",
+    "EQL",
+    "NEQ",
+    "LSS",
+    "LEQ",
+    "GTR",
+    "GEQ",
+};
+
 // Initiliaze stack and register file
 int stack[MAX_STACK_LENGTH];
 int RF[REG_FILE_SIZE];
@@ -60,16 +112,17 @@ void execute_program(instruction *code, int printFlag)
     }
 
     // Enter fetch-execute cycle.
-    int halt = 0, line = 0;
+    int line, halt = 0;
     while (!halt)
     {
         // Fetch an instruction and place in IR register.
         // Increment program counter.
+        line = PC;
         instruction IR;
         IR = code[PC++];
 
         // Load instructions into stack before execution
-        stack[line] = IR.opcode;
+        stack[line - 1] = IR.opcode;
 
         // Temp variable for calculations
         int tmp = 0;
@@ -82,7 +135,7 @@ void execute_program(instruction *code, int printFlag)
             break;
 
         case LIT:
-            // RF[IR.R] = IR.M
+            RF[IR.r] = IR.m;
             break;
 
         case RET:
@@ -95,19 +148,19 @@ void execute_program(instruction *code, int printFlag)
         case LOD:
             // Load value to register IR.R from the stack location at
             // offset RF[IR.M] from L lexicographical levels up
-            // RF[IR.R] = stack[base(L) - RF[IR.M]]
             // Before performing the load, check for Out of Bounds
             // Access Error by checking if base(L) - M is less than
             // zero or greater than or equal to MAX_STACK_LENGTH
+            RF[IR.r] = stack[base(IR.l, BP, stack) - RF[IR.m]];
             break;
 
         case STO:
             // Store value from register IR.R to the stack location at
             // offset RF[IR.M] from L lexicographical levels down
-            // stack[base(L) - RF[IR.M]] = RF[IR.R]
             // Before performing the load, check for Out of Bounds
             // Access Error by checking if base(L) - M is less than
             // zero or greater than or equal to MAX_STACK_LENGTH
+            stack[base(IR.l, BP, stack) - RF[IR.m]] = RF[IR.r];
             break;
 
         case CAL:
@@ -137,18 +190,21 @@ void execute_program(instruction *code, int printFlag)
 
         case JPC:
             // Jump to instruction M if register R is 0
-            if (IR.r == 0)
+            if (RF[IR.r] == 0)
                 PC = IR.m;
             break;
 
         case WRT:
             // Print register R
+            printf("\n%d\n", RF[IR.r]);
             break;
 
         case RED:
             // Register R equals scanf()
             printf("Please Enter a Value: ");
-            scanf("%d", &IR.r);
+            int tmp;
+            scanf("%d", &tmp);
+            RF[IR.r] = tmp;
             break;
 
         case HAL:
@@ -158,99 +214,100 @@ void execute_program(instruction *code, int printFlag)
 
         case NEG:
             // Negate the register R
-            IR.r = ~IR.r;
+            RF[IR.r] = ~RF[IR.r];
             break;
 
         case ADD:
             // Add the registers L and M and store the result
             // in register R
-            tmp = IR.l + IR.m;
-            IR.r = tmp;
+            tmp = RF[IR.l] + RF[IR.m];
+            RF[IR.r] = tmp;
             break;
 
         case SUB:
             // Subtract register M from register L and store the result
             // in register R
-            tmp = IR.l - IR.m;
-            IR.r = tmp;
+            tmp = RF[IR.l] - RF[IR.m];
+            RF[IR.r] = tmp;
             break;
 
         case MUL:
             // Multiply registers L and M and store the result
             // in register R
-            tmp = IR.l * IR.m;
-            IR.r = tmp;
+            tmp = RF[IR.l] * RF[IR.m];
+            RF[IR.r] = tmp;
             break;
 
         case DIV:
             // Divide register L by register M and store the result
             // in register R
-            tmp = IR.l / IR.m;
-            IR.r = tmp;
+            tmp = RF[IR.l] / RF[IR.m];
+            RF[IR.r] = tmp;
             break;
 
         case MOD:
             // Set register R equal to register L modulo register M
-            tmp = IR.l % IR.m;
-            IR.r = tmp;
+            tmp = RF[IR.l] % RF[IR.m];
+            RF[IR.r] = tmp;
             break;
 
         case EQL:
             // If register L equals register M, set register R to 1.
             // Otherwise set register R to 0
-            if (IR.l == IR.m)
-                IR.r = 1;
+            if (RF[IR.l] == RF[IR.m])
+                RF[IR.r] = 1;
             else
-                IR.r = 0;
+                RF[IR.r] = 0;
             break;
 
         case NEQ:
             // If register L does not equal register M, set register R to
             // 1. Otherwise set register R to 0
-            if (IR.l == IR.m)
-                IR.r = 1;
+            if (RF[IR.l] != RF[IR.m])
+                RF[IR.r] = 1;
             else
-                IR.r = 0;
+                RF[IR.r] = 0;
             break;
 
         case LSS:
             // If register L is less than register M, set register R to 1.
             // Otherwise set register R to 0
-            if (IR.l < IR.m)
-                IR.r = 1;
+            if (RF[IR.l] < RF[IR.m])
+                RF[IR.r] = 1;
             else
-                IR.r = 0;
+                RF[IR.r] = 0;
             break;
 
         case LEQ:
             // If register L is less than or equal to register M, set register R to 1.
             // Otherwise set register R to 0
-            if (IR.l <= IR.m)
-                IR.r = 1;
+            if (RF[IR.l] <= RF[IR.m])
+                RF[IR.r] = 1;
             else
-                IR.r = 0;
+                RF[IR.r] = 0;
             break;
 
         case GTR:
             // If register L is greater than register M, set register R to  1.
             // Otherwise set register R to 0
-            if (IR.l > IR.m)
-                IR.r = 1;
+            if (RF[IR.l] > RF[IR.m])
+                RF[IR.r] = 1;
             else
-                IR.r = 0;
+                RF[IR.r] = 0;
             break;
 
         case GEQ:
             // If register L is greater than or equal to register M, set register R to 1.
             // Otherwise set register R to 0
-            if (IR.l >= IR.m)
-                IR.r = 1;
+            if (RF[IR.l] >= RF[IR.m])
+                RF[IR.r] = 1;
             else
-                IR.r = 0;
+                RF[IR.r] = 0;
             break;
         }
+
         // Print line of exection after instruction
-        print_execution(line, opname[IR.opcode - 1], IR, PC, BP, SP, stack, RF);
-        line++;
+        char *op = opnames[IR.opcode - 1];
+        print_execution(line, op, IR, PC, BP, SP, stack, RF);
     }
 }
